@@ -20,7 +20,7 @@ protected:
 	// Called when the game starts
 	virtual void BeginPlay() override;
 	TArray<FVector2D> getNeighbors(FVector2D hex, FVector2D MinHex, FVector2D MaxHex);
-	TArray<FVector2D> getNeighbors(FVector2D CurrentHex, TArray<FVector2D> ContainTiles);
+	TArray<FVector2D> getNeighbors(FVector2D CurrentHex, TArray<FVector2D> ContainTiles, TArray<FVector2D> ExcludesHex, FVector2D TargetHex);
 	int PathCost(const FVector2D& a, const FVector2D& b);
 
 public:	
@@ -31,6 +31,6 @@ public:
 	TArray<FVector2D> GetRangeTilesPositions(FVector2D StartHex, int MaxDistance, FVector2D MinHex, FVector2D MaxHex, TArray<FVector2D> ExcludesHex);
 
 	UFUNCTION(BlueprintCallable, Category = "Action")
-	TArray<FVector2D> PathGrid(FVector2D StartHex, FVector2D TargetHex, TArray<FVector2D> ContainTiles);
+	TArray<FVector2D> PathGrid(FVector2D StartHex, FVector2D TargetHex, TArray<FVector2D> ContainTiles, TArray<FVector2D> ExcludesHex);
 		
 };
