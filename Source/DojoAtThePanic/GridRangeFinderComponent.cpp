@@ -65,7 +65,7 @@ TArray<FVector2D> UGridRangeFinderComponent::GetRangeTilesPositions(FVector2D St
     return hexesInRange;
 }
 
-TArray<FVector2D> UGridRangeFinderComponent::PathGrid(FVector2D StartHex, FVector2D TargetHex, TArray<FVector2D> ContainTiles) {
+TArray<FVector2D> UGridRangeFinderComponent::PathGrid(FVector2D StartHex, FVector2D TargetHex, TArray<FVector2D> ContainTiles, TArray<FVector2D> ExcludesHex) {
     TMap<FVector2D, FVector2D> came_from;
     TMap<FVector2D, int> cost_so_far;
 	TArray<FVector2D> hexesPath;
@@ -90,7 +90,7 @@ TArray<FVector2D> UGridRangeFinderComponent::PathGrid(FVector2D StartHex, FVecto
             break;
         }
 
-        for (auto neighbor : getNeighbors(front.Key, ContainTiles)) {
+        for (auto neighbor : getNeighbors(front.Key, ContainTiles, ExcludesHex, TargetHex)) {
                 int new_cost = cost_so_far[front.Key] + 1;
                 if (!cost_so_far.Contains(neighbor) || new_cost < cost_so_far[neighbor]) {
                     cost_so_far.Add(neighbor, new_cost);
@@ -153,7 +153,7 @@ TArray<FVector2D> UGridRangeFinderComponent::getNeighbors(FVector2D CurrentHex, 
 	return Neighbors;
 }
 
-TArray<FVector2D> UGridRangeFinderComponent::getNeighbors(FVector2D CurrentHex, TArray<FVector2D> ContainTiles)
+TArray<FVector2D> UGridRangeFinderComponent::getNeighbors(FVector2D CurrentHex, TArray<FVector2D> ContainTiles, TArray<FVector2D> ExcludesHex, FVector2D TargetHex)
 {
 	int Offset = 1;
 
@@ -170,6 +170,10 @@ TArray<FVector2D> UGridRangeFinderComponent::getNeighbors(FVector2D CurrentHex, 
 	TArray<FVector2D> Neighbors;
 	for (auto Direction : Directions) {
 		FVector2D NewNeighbor = CurrentHex + Direction;
+
+		if (NewNeighbor != TargetHex && ExcludesHex.Num() > 0 && ExcludesHex.Contains(NewNeighbor)) {
+			continue;
+		}
 
 		if (ContainTiles.Num() > 0 && !ContainTiles.Contains(NewNeighbor)) {
 			continue;
